@@ -1,5 +1,30 @@
 # API Documentation
 
+## API Summary
+
+| Endpoint | Method | Description |
+| --- | --- | --- |
+| `/api/auth/login` | `POST` | Log in and obtain a JWT token |
+| `/api/auth/password-reset` | `POST` | Request a password reset |
+| `/api/wellness-plan/active` | `GET` | Get active wellness plan details |
+| `/api/wellness-plan/{planId}` | `PUT` | Update wellness plan details |
+| `/api/wellness-plan` | `POST` | Create a new wellness plan |
+| `/api/client-values` | `GET` | List all client values |
+| `/api/client-values` | `POST` | Create a new client value |
+| `/api/client-values/{id}` | `GET` | Get client value by ID |
+| `/api/client-values/{id}` | `PUT` | Update client value details |
+| `/api/client-values/{id}` | `DELETE` | Delete client value by ID |
+| `/api/patients/{patientId}/client-values` | `GET` | List all client values for a patient |
+| `/api/patients/{patientId}/client-values` | `POST` | Add client value to a patient |
+| `/api/patients/{patientId}/client-values/{valueId}` | `DELETE` | Remove client value from a patient |
+| `/api/experimental-exercises` | `GET` | List experimental exercises recommended by physicians |
+| `/api/experimental-exercises/{wellnessPlanId}/audio` | `PUT` | Remove recommended audio from experimental exercises |
+| `/api/patients/{patientId}/profile` | `GET` | Get patient profile details |
+| `/api/patients/{patientId}/profile` | `PUT` | Update patient profile details |
+| `/api/patients/{patientId}/feedback` | `POST` | Provide feedback |
+| `/api/patients/{patientId}/outcome-measures` | `GET` | List all previous outcome measures for a patient |
+| `/api/outcome-measures` | `POST` | Create a new outcome measure |
+
 ## Authentication and Authorization
 
 All endpoints require authentication using Bearer Token (JWT). Ensure that the token is included in the `Authorization` header of each request. Example:
@@ -7,6 +32,8 @@ All endpoints require authentication using Bearer Token (JWT). Ensure that the t
 ```
 Authorization: Bearer <your-token>
 ```
+
+
 
 ### Login
 
