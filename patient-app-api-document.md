@@ -4,7 +4,9 @@
 
 | Endpoint | Method | Description |
 | --- | --- | --- |
-| `/api/auth/login` | `POST` | Log in and obtain a JWT token |
+| `/auth/sign-up/` | `POST` | Sign up and create a new account |
+| `/auth/sign-in/` | `POST` | Sign in with credentials |
+| `/auth/respond-to-challenge/` | `POST` | Respond to a new password required challenge |
 | `/api/auth/password-reset` | `POST` | Request a password reset |
 | `/api/wellness-plan/active` | `GET` | Get active wellness plan details |
 | `/api/wellness-plan/{planId}` | `PUT` | Update wellness plan details |
@@ -35,11 +37,65 @@ Authorization: Bearer <your-token>
 
 
 
-### Login
+### Sign-Up
 
-**URL:** `/api/auth/login`  
+**URL:** `/auth/sign-up/`  
 **Method:** `POST`  
-**Description:** This endpoint allows a user to log in and obtain a JWT token.
+**Description:** This endpoint allows a user to sign up and create a new account.
+
+#### Request Body:
+
+- **Content-Type:** `application/json`
+- **Body:**
+    ```json
+    {
+        "email": "<string>"
+    }
+    ```
+
+#### Responses:
+
+##### If Sign-Up is Successful:
+
+- **Status Code:** `200 OK`
+- **Content-Type:** `application/json`
+- **Body:**
+    ```json
+    {
+        "message": "User created successfully and verification email sent",
+        "user": {
+            // ...user details...
+        }
+    }
+    ```
+
+##### If Sign-Up Fails:
+
+- **Status Code:** `400 Bad Request`
+- **Content-Type:** `application/json`
+- **Body:**
+    ```json
+    {
+        "message": "Email is required."
+    }
+    ```
+
+##### If Internal Server Error Occurs:
+
+- **Status Code:** `500 Internal Server Error`
+- **Content-Type:** `application/json`
+- **Body:**
+    ```json
+    {
+        "detail": "An error message describing the issue"
+    }
+    ```
+
+### Initial Sign-In
+
+**URL:** `/auth/sign-in/`  
+**Method:** `POST`  
+**Description:** This endpoint allows a user to sign in with their credentials.
 
 #### Request Body:
 
@@ -54,36 +110,41 @@ Authorization: Bearer <your-token>
 
 #### Responses:
 
-##### If Login is Successful:
+##### If Sign-In is Successful:
 
 - **Status Code:** `200 OK`
 - **Content-Type:** `application/json`
 - **Body:**
     ```json
     {
-        "status": 200,
-        "data": {
-            "token": "<string>"
-        },
-        "error": null,
-        "message": "Login successful"
+        "message": "Sign-in successful",
+        "tokens": {
+            // ...authentication tokens...
+        }
     }
     ```
 
-##### If Login Fails:
+##### If New Password is Required:
 
-- **Status Code:** `401 Unauthorized`
+- **Status Code:** `200 OK`
 - **Content-Type:** `application/json`
 - **Body:**
     ```json
     {
-        "status": 401,
-        "data": null,
-        "error": {
-            "code": "UNAUTHORIZED",
-            "message": "Invalid email or password"
-        },
-        "message": "Login failed"
+        "message": "New password required.",
+        "challengeName": "NEW_PASSWORD_REQUIRED",
+        "sessionId": "<string>"
+    }
+    ```
+
+##### If Sign-In Fails:
+
+- **Status Code:** `400 Bad Request`
+- **Content-Type:** `application/json`
+- **Body:**
+    ```json
+    {
+        "message": "Email and Password are required."
     }
     ```
 
@@ -94,15 +155,66 @@ Authorization: Bearer <your-token>
 - **Body:**
     ```json
     {
-        "status": 500,
-        "data": null,
-        "error": {
-            "code": "INTERNAL_SERVER_ERROR",
-            "message": "An unexpected error occurred"
-        },
-        "message": "Something went wrong. Please try again later."
+        "detail": "An error message describing the issue"
     }
     ```
+
+### Respond to Challenge
+
+**URL:** `/auth/respond-to-challenge/`  
+**Method:** `POST`  
+**Description:** This endpoint allows a user to respond to a new password required challenge.
+
+#### Request Body:
+
+- **Content-Type:** `application/json`
+- **Body:**
+    ```json
+    {
+        "email": "<string>",
+        "newPassword": "<string>",
+        "sessionId": "<string>"
+    }
+    ```
+
+#### Responses:
+
+##### If Challenge Response is Successful:
+
+- **Status Code:** `200 OK`
+- **Content-Type:** `application/json`
+- **Body:**
+    ```json
+    {
+        "message": "Password updated successfully. Sign-in complete.",
+        "tokens": {
+            // ...authentication tokens...
+        }
+    }
+    ```
+
+##### If Challenge Response Fails:
+
+- **Status Code:** `400 Bad Request`
+- **Content-Type:** `application/json`
+- **Body:**
+    ```json
+    {
+        "message": "Invalid or expired session ID."
+    }
+    ```
+
+##### If Internal Server Error Occurs:
+
+- **Status Code:** `500 Internal Server Error`
+- **Content-Type:** `application/json`
+- **Body:**
+    ```json
+    {
+        "detail": "An error message describing the issue"
+    }
+    ```
+
 
 ### Password Reset
 
